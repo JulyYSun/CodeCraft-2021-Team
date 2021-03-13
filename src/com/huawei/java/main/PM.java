@@ -18,7 +18,7 @@ import java.util.List;
 
 public class PM {
 
-    final private PMType type;
+    private PMType type;
     //服务器编号
     private int id;
     //两个节点剩余的CPU和内存容量
@@ -28,6 +28,10 @@ public class PM {
     private int BMem_Remaining;
 //    //部署在此的虚拟机
 //    private List<VM> vmList;
+
+
+    public PM() {
+    }
 
     public PM(PMType type, int id, int ACPU_Remaining, int BCPU_Remaining,
               int AMem_Remaining, int BMem_Remaining) {
@@ -55,6 +59,8 @@ public class PM {
                         if (BMem_Remaining >= MemNeeds/2.0){
                             //如果两个节点都符合条件则将虚拟机加入列表
                             addVM("AB",vm);
+                            //部署成功修改虚拟机部署节点
+                            vm.setNode("AB");
                             return true;
                         }
                     }
@@ -68,12 +74,14 @@ public class PM {
                 if (AMem_Remaining >= MemNeeds) {
                     //如果A节点两个资源都符合条件，将该虚拟机部署到本服务器中
                     addVM("A",vm);
+                    vm.setNode("A");
                     return true;
                 }
             } else if (BCPU_Remaining >= CPUNeeds) {
                 if (BMem_Remaining >= MemNeeds) {
                     //如果B节点两个资源都符合条件，将该虚拟机部署到本服务器中
                     addVM("B",vm);
+                    vm.setNode("B");
                     return true;
                 }
             }
@@ -86,7 +94,7 @@ public class PM {
         System.out.println(vm.toString());
         switch (node) {
             case "A":
-                if (!vmType.isDouble()) {
+                if (vmType.isDouble()) {
                     throw new IllegalArgumentException("Mismatched VM!");
                 }
                 this.ACPU_Remaining -= vmType.getCpu();
@@ -97,7 +105,7 @@ public class PM {
 //                vmList.add(vm);
                 break;
             case "B":
-                if (!vmType.isDouble()) {
+                if (vmType.isDouble()) {
                     throw new IllegalArgumentException("Mismatched VM!");
                 }
                 this.BCPU_Remaining -= vmType.getCpu();
@@ -108,16 +116,16 @@ public class PM {
 //                vmList.add(vm);
                 break;
             case "AB":
-                if (vmType.isDouble()) {
+                if (!vmType.isDouble()) {
                     throw new IllegalArgumentException("Mismatched VM!");
                 }
                 this.ACPU_Remaining -= vmType.getCpu() / 2.0;
                 this.AMem_Remaining -= vmType.getMemory() / 2.0;
                 this.BCPU_Remaining -= vmType.getCpu() / 2.0;
                 this.BMem_Remaining -= vmType.getMemory() / 2.0;
-                if (ACPU_Remaining * AMem_Remaining * BCPU_Remaining * BMem_Remaining < 0) {
-                    throw new IllegalArgumentException("Resources shortage!");
-                }
+//                if (ACPU_Remaining * AMem_Remaining * BCPU_Remaining * BMem_Remaining < 0) {
+//                    throw new IllegalArgumentException("Resources shortage!");
+//                }
                 break;
             default:
                 throw new IllegalArgumentException("Unknown node!");
@@ -158,5 +166,61 @@ public class PM {
                 throw new Exception("No such VM in this server");
         }
         return true;
+    }
+
+    public PMType getType() {
+        return type;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getACPU_Remaining() {
+        return ACPU_Remaining;
+    }
+
+    public void setACPU_Remaining(int ACPU_Remaining) {
+        this.ACPU_Remaining = ACPU_Remaining;
+    }
+
+    public int getBCPU_Remaining() {
+        return BCPU_Remaining;
+    }
+
+    public void setBCPU_Remaining(int BCPU_Remaining) {
+        this.BCPU_Remaining = BCPU_Remaining;
+    }
+
+    public int getAMem_Remaining() {
+        return AMem_Remaining;
+    }
+
+    public void setAMem_Remaining(int AMem_Remaining) {
+        this.AMem_Remaining = AMem_Remaining;
+    }
+
+    public int getBMem_Remaining() {
+        return BMem_Remaining;
+    }
+
+    public void setBMem_Remaining(int BMem_Remaining) {
+        this.BMem_Remaining = BMem_Remaining;
+    }
+
+    @Override
+    public String toString() {
+        return "PM{" +
+                "type=" + type +
+                ", id=" + id +
+                ", ACPU_Remaining=" + ACPU_Remaining +
+                ", BCPU_Remaining=" + BCPU_Remaining +
+                ", AMem_Remaining=" + AMem_Remaining +
+                ", BMem_Remaining=" + BMem_Remaining +
+                '}';
     }
 }

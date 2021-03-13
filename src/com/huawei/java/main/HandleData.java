@@ -25,6 +25,8 @@ public class HandleData {
 
     static int id = 0;
 
+    static int requestCounts=1;
+
     public HandleData(List<PMType> pmTypeList, List<VMType> vmTypeList) {
         this.pmTypeList = pmTypeList;
         this.vmTypeList = vmTypeList;
@@ -45,6 +47,7 @@ public class HandleData {
             }else{
                 throw new IllegalArgumentException("Unknow Operation!");
             }
+            System.out.println("Request Counts : "+requestCounts++);
         }
         return true;
     }
@@ -82,6 +85,7 @@ public class HandleData {
         }
         //找不到合适的服务器则购买，再分配
         PM newPM = purchasePM();
+        System.out.println(newPM.toString());
         while (!newPM.deployVM(vm)){
             delLastPM();
             newPM = purchasePM();
@@ -107,7 +111,13 @@ public class HandleData {
             throw new Exception("No such VM to delete");
         }
         int pmID = vmToDel.getPmID();
-        PM pm = pmList.get(pmID);
+//        pmID是编号，不是下标
+        PM pm =new PM();
+        for(int i=0;i<pmList.size();i++){
+            if(pmList.get(i).getId()==pmID)
+                pm=pmList.get(i);
+        }
+
         pm.undeployVM(vmToDel);
         return true;
     }
